@@ -1,6 +1,7 @@
 ---
 # Nginx settings
 nginx_redirect_http: False
+nginx_http_port: 80
 
 # SSL configuration
 nginx_ssl_enabled: False
