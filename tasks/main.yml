@@ -40,6 +40,14 @@
   notify: reload nginx
   tags: nginx
 
+- name: Remove nginx rewrite config
+  file:
+    dest=/etc/nginx/conf.d/rewrite.conf
+    state=absent
+  when: not nginx_redirect_http
+  notify: reload nginx
+  tags: nginx
+
 - name: Copy nginx SSL config
   template:
     src=ssl.inc.j2
@@ -52,9 +60,9 @@
   tags: nginx
 
 - name: Copy SSL public certificate
-  copy:
-    src=roles/nginx/files/STAR_{{DOMAIN}}.crt
-    dest=/etc/pki/tls/certs/
+  template:
+    src=ssl_crt.j2
+    dest={{ nginx_ssl_cert_path }}/{{ nginx_ssl_filename }}.crt
     owner=root
     mode=0644
   when: nginx_ssl_enabled
@@ -63,8 +71,8 @@
 
 - name: Copy SSL private key
   template:
-    src=server_ssl.inc.j2
-    dest=/etc/pki/tls/private/{{ something }}.key
+    src=ssl_key.j2
+    dest={{ nginx_ssl_key_path }}/{{ nginx_ssl_filename }}.key
     owner=root
     group=root
     mode=0600

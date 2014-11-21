@@ -2,6 +2,7 @@
 # Nginx settings
 nginx_redirect_http: False
 nginx_http_port: 80
+nginx_https_port: 443
 
 # SSL configuration
 nginx_ssl_enabled: False
