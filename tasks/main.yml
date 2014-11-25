@@ -82,7 +82,7 @@
     dest={{ nginx_ssl_key_path }}/{{ nginx_ssl_filename }}.key
     owner=root
     group=root
-    mode=0600
+    mode=0400
   when: nginx_ssl_enabled
   tags: nginx
   notify: reload nginx
