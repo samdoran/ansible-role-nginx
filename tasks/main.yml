@@ -59,6 +59,13 @@
   notify: reload nginx
   tags: nginx
 
+- name: Remove nginx SSL config
+  file:
+    path=/etc/nginx/conf.d/ssl.inc
+    state=absent
+  when: not nginx_ssl_enabled
+  tags: nginx
+
 - name: Copy SSL public certificate
   template:
     src=ssl_crt.j2
