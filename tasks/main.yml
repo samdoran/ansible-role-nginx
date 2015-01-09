@@ -1,11 +1,11 @@
 ---
 - name: Install nginx repo
   copy:
-    src=nginx.repo
-    dest=/etc/yum.repos.d/nginx.repo
-    owner=root
-    group=root
-    mode=0644
+    src: nginx.repo
+    dest: /etc/yum.repos.d/nginx.repo
+    owner: root
+    group: root
+    mode: 0644
   tags: nginx
 
 - name: Install nginx
@@ -21,68 +21,75 @@
 
 - name: Copy main nginx config
   template:
-    src=nginx.conf.j2
-    dest=/etc/nginx/nginx.conf
-    owner=root
-    group=root
-    mode=0644
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
   notify: restart nginx
   tags: nginx
 
 - name: Copy nginx rewrite config
   template:
-    src=rewrite.conf.j2
-    dest=/etc/nginx/conf.d/rewrite.conf
-    owner=root
-    group=root
-    mode=0644
+    src: rewrite.conf.j2
+    dest: /etc/nginx/conf.d/rewrite.conf
+    owner: root
+    group: root
+    mode: 0644
   when: nginx_redirect_http
   notify: reload nginx
   tags: nginx
 
 - name: Remove nginx rewrite config
   file:
-    dest=/etc/nginx/conf.d/rewrite.conf
-    state=absent
+    dest: /etc/nginx/conf.d/rewrite.conf
+    state: absent
   when: not nginx_redirect_http
   notify: reload nginx
   tags: nginx
 
 - name: Copy nginx SSL config
   template:
-    src=ssl.inc.j2
-    dest=/etc/nginx/conf.d/ssl.inc
-    owner=root
-    group=root
-    mode=0644
+    src: ssl.inc.j2
+    dest: /etc/nginx/conf.d/ssl.inc
+    owner: root
+    group: root
+    mode: 0644
   when: nginx_ssl_enabled
   notify: reload nginx
   tags: nginx
 
+- name: Remove nginx SSL config
+  file:
+    path: /etc/nginx/conf.d/ssl.inc
+    state: absent
+  when: not nginx_ssl_enabled
+  tags: nginx
+
 - name: Copy SSL public certificate
   template:
-    src=ssl_crt.j2
-    dest={{ nginx_ssl_cert_path }}/{{ nginx_ssl_filename }}.crt
-    owner=root
-    mode=0644
+    src: ssl_crt.j2
+    dest: "{{ nginx_ssl_cert_path }}/{{ nginx_ssl_filename }}.crt"
+    owner: root
+    mode: 0644
   when: nginx_ssl_enabled
   notify: reload nginx
   tags: nginx
 
 - name: Copy SSL private key
   template:
-    src=ssl_key.j2
-    dest={{ nginx_ssl_key_path }}/{{ nginx_ssl_filename }}.key
-    owner=root
-    group=root
-    mode=0600
+    src: ssl_key.j2
+    dest: "{{ nginx_ssl_key_path }}/{{ nginx_ssl_filename }}.key"
+    owner: root
+    group: root
+    mode: 0400
   when: nginx_ssl_enabled
   tags: nginx
   notify: reload nginx
 
 - name: Enable and start nginx
   service:
-    name=nginx
-    state=started
-    enabled=true
+    name: nginx
+    state: started
+    enabled: true
   tags: nginx
