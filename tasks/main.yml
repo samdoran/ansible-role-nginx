@@ -87,6 +87,28 @@
   tags: nginx
   notify: reload nginx
 
+- name: Allow nginx to listen on additional ports
+  selinux_port:
+    context_t: "{{ item.context_t }}"
+    proto: "{{ item.protocol }}"
+    port: "{{ item.port }}"
+    state: "{{ item.state | default('present') }}"
+  with_items: nginx_selinux_ports
+  when: >
+    nginx_selinux_ports is defined and
+    ansible_distribution_version | float >=6.6
+  tags: [ 'nginx' , 'selinux' ]
+
+- name: Allow nginx to proxy open connections
+  seboolean:
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
+  when: >
+    nginx_selinux_ports is defined and
+    ansible_distribution_version | float >=6.6
+  tags: [ 'nginx' , 'selinux' ]
+
 - name: Enable and start nginx
   service:
     name: nginx
