@@ -35,6 +35,13 @@ Define log directories:
     nginx_error_log: error.log
     nginx_access_log: access.log
 
+Change SELinux settings to allow nginx to bind to other ports (CentOS >= 6.6):
+
+    nginx_selinux_ports:
+      - context_t: "http_port_t"
+        protocol: tcp
+        port: "9200"
+
 
 License
 -------
