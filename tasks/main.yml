@@ -97,7 +97,7 @@
   when: >
     nginx_selinux_ports is defined and
     ansible_distribution_version | float >=6.6
-  tags: [ 'nginx' , 'selinux' ]
+  tags: [ 'nginx' , 'selinux' , 'esconfig' , 'nginxconfig' , 'kibanaconfig' ]
 
 - name: Allow nginx to proxy open connections
   seboolean:
@@ -107,7 +107,7 @@
   when: >
     nginx_selinux_ports is defined and
     ansible_distribution_version | float >=6.6
-  tags: [ 'nginx' , 'selinux' ]
+  tags: [ 'nginx' , 'selinux' , 'esconfig' , 'nginxconfig' , 'kibanaconfig' ]
 
 - name: Enable and start nginx
   service:
