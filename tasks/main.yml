@@ -88,9 +88,9 @@
   notify: reload nginx
 
 - name: Allow nginx to listen on additional ports
-  selinux_port:
-    context_t: "{{ item.context_t }}"
-    proto: "{{ item.protocol }}"
+  seport:
+    context: "{{ item.context_t }}"
+    protocol: "{{ item.protocol }}"
     port: "{{ item.port }}"
     state: "{{ item.state | default('present') }}"
   with_items: nginx_selinux_ports
