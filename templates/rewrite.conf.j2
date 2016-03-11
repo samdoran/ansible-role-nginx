@@ -1,5 +1,5 @@
 server {
     listen       {{ nginx_http_port }};
-    server_name  {{ ansible_fqdn }};
+    server_name  {{ nginx_server_name }};
     rewrite      ^ https://$server_name$request_uri? permanent;
 }

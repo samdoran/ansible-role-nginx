@@ -13,6 +13,10 @@ Open appropriate ports in the firewall.
 Role Variables
 --------------
 
+Set the FQDN of the server:
+
+    nginx_server_name: "{{ ansible_fqdn }}"
+
 Include config file that redirects traffic to `nginx_http_port` to https:
 
     nginx_redirect_http: False
