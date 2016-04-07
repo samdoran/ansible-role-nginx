@@ -38,7 +38,9 @@
     mode: 0644
   when: nginx_redirect_http
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx-config
 
 - name: Remove nginx rewrite config
   file:
