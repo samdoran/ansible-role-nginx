@@ -1,7 +1,7 @@
 Nginx
-========
+======
 
-Install nginx from the official nginx repository.
+Install nginx from the official repository.
 
 This role clears the default nginx configuration and looks for additional configuration files in `/etc/nginx/conf.d/*.conf`. Roles that need nginx should include their own nginx config file and place it in this directory.
 

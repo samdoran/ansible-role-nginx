@@ -1,4 +1,3 @@
----
 - name: Install nginx repo
   copy:
     src: nginx.repo
@@ -9,11 +8,15 @@
   tags: nginx
 
 - name: Install nginx
-  yum: name=nginx state=present
+  yum:
+    name: nginx
+    state: present
   tags: nginx
 
 - name: Delete default nginx config
-  file: dest=/etc/nginx/conf.d/{{ item }} state=absent
+  file:
+    dest: /etc/nginx/conf.d/{{ item }}
+    state: absent
   with_items:
     - default.conf
     - example_ssl.conf
@@ -96,10 +99,15 @@
     port: "{{ item.port }}"
     state: "{{ item.state | default('present') }}"
   with_items: "{{ nginx_selinux_ports }}"
-  when: >
-    nginx_selinux_ports is defined and
-    ansible_distribution_version | float >=6.6
-  tags: [ 'nginx' , 'selinux' , 'esconfig' , 'nginxconfig' , 'kibanaconfig' ]
+  when:
+    - nginx_selinux_ports is defined and
+    - ansible_distribution_version | float >=6.6
+  tags:
+    - nginx
+    - selinux
+    - esconfig
+    - nginxconfig
+    - kibanaconfig
 
 - name: Allow nginx to proxy open connections
   seboolean:
@@ -109,7 +117,12 @@
   when: >
     nginx_selinux_ports is defined and
     ansible_distribution_version | float >=6.6
-  tags: [ 'nginx' , 'selinux' , 'esconfig' , 'nginxconfig' , 'kibanaconfig' ]
+  tags:
+    - nginx
+    - selinux
+    - esconfig
+    - nginxconfig
+    - kibanaconfig
 
 - name: Enable and start nginx
   service:
