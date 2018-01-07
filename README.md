@@ -1,9 +1,9 @@
 Nginx
-======
+========
 
-Install nginx from the official repository.
+Install Nginx from the official Nginx repository.
 
-This role clears the default nginx configuration and looks for additional configuration files in `/etc/nginx/conf.d/*.conf`. Roles that need nginx should include their own nginx config file and place it in this directory.
+This role clears the default nginx configuration and looks for additional configuration files in `/etc/nginx/conf.d/*.conf`. Roles that need Nginx should include their own Nginx config file and place it in this directory with a `.conf` extension.
 
 Requirements
 ------------
@@ -13,11 +13,7 @@ Open appropriate ports in the firewall.
 Role Variables
 --------------
 
-Set the FQDN of the server:
-
-    nginx_server_name: "{{ ansible_fqdn }}"
-
-Include config file that redirects traffic to `nginx_http_port` to https:
+Include config file that redirects traffic to `nginx_http_port` to HTTPS:
 
     nginx_redirect_http: False
 
@@ -26,12 +22,15 @@ Define ports:
     nginx_http_port: 80
     nginx_https_port: 443
 
-SSL Configuration:
+Default server name:
+    nginx_server_name: "{{ ansible_fqdn }}"
 
-    nginx_ssl_enabled: False
-    nginx_ssl_cert_path: /etc/pki/tls/certs
-    nginx_ssl_key_path: /etc/pki/tls/private
-    nginx_ssl_filename: "{{ ansible_fqdn }}"
+TLS Configuration:
+
+    nginx_tls_enabled: no
+    nginx_tls_cert_path: /etc/pki/tls/certs
+    nginx_tls_key_path: /etc/pki/tls/private
+    nginx_tls_filename: "{{ ansible_fqdn }}"
 
 Define log directories:
 
@@ -39,7 +38,7 @@ Define log directories:
     nginx_error_log: error.log
     nginx_access_log: access.log
 
-Change SELinux settings to allow nginx to bind to other ports (CentOS >= 6.6):
+Change SELinux settings to allow Nginx to bind to other ports (CentOS >= 6.6):
 
     nginx_selinux_ports:
       - context_t: "http_port_t"

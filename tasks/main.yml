@@ -15,7 +15,7 @@
 
 - name: Delete default nginx config
   file:
-    dest: /etc/nginx/conf.d/{{ item }}
+      dest: /etc/nginx/conf.d/{{ item }}
     state: absent
   with_items:
     - default.conf
@@ -41,9 +41,7 @@
     mode: 0644
   when: nginx_redirect_http
   notify: reload nginx
-  tags:
-    - nginx
-    - nginx-config
+  tags: nginx
 
 - name: Remove nginx rewrite config
   file:
@@ -98,31 +96,27 @@
     protocol: "{{ item.protocol }}"
     port: "{{ item.port }}"
     state: "{{ item.state | default('present') }}"
-  with_items: "{{ nginx_selinux_ports }}"
+  with_items: nginx_selinux_ports
   when:
-    - nginx_selinux_ports is defined and
-    - ansible_distribution_version | float >=6.6
+    - nginx_selinux_ports is defined
+    - ansible_distribution_version | version_compare('6.6', '>=')
   tags:
     - nginx
     - selinux
-    - esconfig
-    - nginxconfig
-    - kibanaconfig
+    - nginx_config
 
 - name: Allow nginx to proxy open connections
   seboolean:
     name: httpd_can_network_connect
     state: yes
     persistent: yes
-  when: >
-    nginx_selinux_ports is defined and
-    ansible_distribution_version | float >=6.6
+  when:
+    - nginx_selinux_ports is defined
+    - ansible_distribution_version | version_compare('6.6', '>=')
   tags:
     - nginx
     - selinux
-    - esconfig
-    - nginxconfig
-    - kibanaconfig
+    - nginx_config
 
 - name: Enable and start nginx
   service:

@@ -1,14 +1,14 @@
 # Nginx settings
 nginx_redirect_http: no
-nginx_server_name: "{{ ansible_fqdn }}"
 nginx_http_port: 80
 nginx_https_port: 443
+nginx_server_name: "{{ ansible_fqdn }}"
 
-# SSL configuration
-nginx_ssl_enabled: no
-nginx_ssl_cert_path: /etc/pki/tls/certs
-nginx_ssl_key_path: /etc/pki/tls/private
-nginx_ssl_filename: "{{ ansible_fqdn }}"
+# TLS configuration
+nginx_tls_enabled: no
+nginx_tls_cert_path: /etc/pki/tls/certs
+nginx_tls_key_path: /etc/pki/tls/private
+nginx_tls_filename: "{{ ansible_fqdn }}"
 
 # Nginx logs
 nginx_log_dir: /var/log/nginx

@@ -1,6 +1,6 @@
 galaxy_info:
   author: Sam Doran
-  description: "Install nginx, a very fast web server and proxy."
+  description:
   company:
   license: MIT
   min_ansible_version: 2.3
@@ -9,9 +9,11 @@ galaxy_info:
   - name: EL
     versions:
       - 6
+      - 7
 
-  galaxy_tags:
-    - nginx
+  categories:
+    - system
     - web
+    - nginx
 
 dependencies: []

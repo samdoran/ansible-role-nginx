@@ -1,0 +1,5 @@
+# Backwards compatability for previous variable names
+nginx_ssl_enabled: "{{ nginx_tls_enabled }}"
+nginx_ssl_cert_path: "{{ nginx_tls_cert_path }}"
+nginx_ssl_key_path: "{{ nginx_tls_key_path }}"
+nginx_ssl_filename: "{{ nginx_tls_filename }}"
