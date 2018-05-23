@@ -1,0 +1,13 @@
+ssl                  on;
+
+ssl_session_cache    {{ nginx_tls_session_cache }};
+ssl_session_timeout  {{ nginx_tls_session_timeout }};
+
+ssl_protocols {% for protocol in nginx_tls_protocols %}{{ protocol }}{% if not loop.last %} {% endif %}{% endfor %};
+ssl_ciphers {% for cipher in nginx_tls_ciphers %}{{ cipher }}{% if not loop.last %}:{% endif %}{% endfor %};
+ssl_prefer_server_ciphers   on;
+
+{% if nginx_tls_crt is defined and nginx_tls_key is defined %}
+ssl_certificate      {{ nginx_tls_cert_path }}/{{ nginx_tls_filename | default(ansible_fqdn) }}.crt;
+ssl_certificate_key  {{ nginx_tls_key_path }}/{{ nginx_tls_filename | default(ansible_fqdn) }}.key;
+{% endif %}

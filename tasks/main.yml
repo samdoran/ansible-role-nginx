@@ -1,7 +1,11 @@
 - name: Install nginx repo
-  copy:
-    src: nginx.repo
-    dest: /etc/yum.repos.d/nginx.repo
+  yum_repository:
+    name: nginx
+    description: nginx repo
+    baseurl: http://nginx.org/packages/centos/$releasever/$basearch/
+    gpgkey: http://nginx.org/keys/nginx_signing.key
+    gpgcheck: yes
+    enabled: yes
     owner: root
     group: root
     mode: 0644
@@ -15,80 +19,91 @@
 
 - name: Delete default nginx config
   file:
-      dest: /etc/nginx/conf.d/{{ item }}
+    dest: "{{ nginx_config_include_path }}/{{ item }}"
     state: absent
-  with_items:
+  loop:
     - default.conf
     - example_ssl.conf
-  tags: nginx
+  tags:
+    - nginx
+    - nginx_config
 
 - name: Copy main nginx config
   template:
     src: nginx.conf.j2
-    dest: /etc/nginx/nginx.conf
+    dest: "{{ nginx_config_path }}/nginx.conf"
     owner: root
     group: root
     mode: 0644
   notify: restart nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx_config
 
 - name: Copy nginx rewrite config
   template:
     src: rewrite.conf.j2
-    dest: /etc/nginx/conf.d/rewrite.conf
+    dest: "{{ nginx_config_include_path }}/rewrite.conf"
     owner: root
     group: root
     mode: 0644
   when: nginx_redirect_http
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx_config
 
 - name: Remove nginx rewrite config
   file:
-    dest: /etc/nginx/conf.d/rewrite.conf
+    dest: "{{ nginx_config_include_path }}/rewrite.conf"
     state: absent
   when: not nginx_redirect_http
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx_config
 
-- name: Copy nginx SSL config
+- name: Copy nginx TLS config
   template:
-    src: ssl.inc.j2
-    dest: /etc/nginx/conf.d/ssl.inc
+    src: tls.inc.j2
+    dest: "{{ nginx_config_include_path }}/tls.inc"
     owner: root
     group: root
     mode: 0644
-  when: nginx_ssl_enabled
+  when: nginx_tls_enabled
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx_config
 
-- name: Remove nginx SSL config
-  file:
-    path: /etc/nginx/conf.d/ssl.inc
-    state: absent
-  when: not nginx_ssl_enabled
-  tags: nginx
-
-- name: Copy SSL public certificate
-  template:
-    src: ssl_crt.j2
-    dest: "{{ nginx_ssl_cert_path }}/{{ nginx_ssl_filename }}.crt"
+- name: Copy TLS public certificate
+  copy:
+    content: "{{ nginx_tls_crt }}"
+    dest: "{{ nginx_tls_cert_path }}/{{ nginx_tls_filename }}.crt"
     owner: root
     mode: 0644
-  when: nginx_ssl_enabled
+  when:
+    - nginx_tls_crt is defined
+    - nginx_tls_enabled
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx_config
 
-- name: Copy SSL private key
-  template:
-    src: ssl_key.j2
-    dest: "{{ nginx_ssl_key_path }}/{{ nginx_ssl_filename }}.key"
+- name: Copy TLS private key
+  copy:
+    content: "{{ nginx_tls_key }}"
+    dest: "{{ nginx_tls_key_path }}/{{ nginx_tls_filename }}.key"
     owner: root
     group: root
     mode: 0400
-  when: nginx_ssl_enabled
-  tags: nginx
+  when:
+    - nginx_tls_key is defined
+    - nginx_tls_enabled
   notify: reload nginx
+  tags:
+    - nginx
+    - nginx_config
 
 - name: Allow nginx to listen on additional ports
   seport:
@@ -96,10 +111,10 @@
     protocol: "{{ item.protocol }}"
     port: "{{ item.port }}"
     state: "{{ item.state | default('present') }}"
-  with_items: nginx_selinux_ports
+  loop: "{{ nginx_selinux_ports }}"
   when:
-    - nginx_selinux_ports is defined
-    - ansible_distribution_version | version_compare('6.6', '>=')
+    - ansible_selinux.status == 'enabled'
+    - ansible_distribution_version is version_compare('6.6', '>=')
   tags:
     - nginx
     - selinux
@@ -111,8 +126,8 @@
     state: yes
     persistent: yes
   when:
-    - nginx_selinux_ports is defined
-    - ansible_distribution_version | version_compare('6.6', '>=')
+    - ansible_selinux.status == 'enabled'
+    - ansible_distribution_version is version_compare('6.6', '>=')
   tags:
     - nginx
     - selinux
