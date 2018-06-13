@@ -18,6 +18,7 @@ nginx_tls_protocols:
   - TLSv1
   - TLSv1.1
   - TLSv1.2
+  - TLSv1.3
 nginx_tls_ciphers:
   - ECDHE-RSA-AES256-GCM-SHA384
   - ECDHE-RSA-AES128-GCM-SHA256

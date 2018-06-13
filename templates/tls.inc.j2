@@ -1,5 +1,5 @@
 ssl                  on;
-
+add_header           Strict-Transport-Security "max-age=31536000; includeSubdomains";
 ssl_session_cache    {{ nginx_tls_session_cache }};
 ssl_session_timeout  {{ nginx_tls_session_timeout }};
 
