@@ -113,8 +113,8 @@
     state: "{{ item.state | default('present') }}"
   loop: "{{ nginx_selinux_ports }}"
   when:
-    - ansible_selinux.status == 'enabled'
-    - ansible_distribution_version is version_compare('6.6', '>=')
+    - ansible_facts.selinux.status == 'enabled'
+    - ansible_facts.distribution_version is version_compare('6.6', '>=')
   tags:
     - nginx
     - selinux
