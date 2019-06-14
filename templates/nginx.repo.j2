@@ -1,0 +1,6 @@
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/{{ ansible_distribution | lower }}/$releasever/$basearch/
+gpgkey=http://nginx.org/keys/nginx_signing.key
+gpgcheck=1
+enabled=1

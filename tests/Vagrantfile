@@ -1,0 +1,34 @@
+Vagrant.configure(2) do |config|
+
+  config.dns.tld = "dev"
+  config.dns.patterns = [/.vagrant.dev$/]
+
+  # CentOS 6
+  config.vm.define "nginx-el6" do |el6|
+    el6.vm.box = "geerlingguy/centos6"
+    el6.vm.network "forwarded_port", guest: 80, host: 8081
+    el6.vm.network "forwarded_port", guest: 443, host: 8441
+    el6.vm.hostname = "nginx-el6.vagrant.dev"
+    config.vm.provider "virtualbox" do |vbox|
+      vbox.memory = 256
+      vbox.cpus = 1
+    end
+  end
+
+  # CentOS 7
+  config.vm.define "nginx-el7" do |el7|
+    el7.vm.box = "geerlingguy/centos7"
+    el7.vm.network "forwarded_port", guest: 80, host: 8082
+    el7.vm.network "forwarded_port", guest: 443, host: 8442
+    el7.vm.hostname = "nginx-el7.vagrant.dev"
+    config.vm.provider "virtualbox" do |vbox|
+      vbox.memory = 256
+      vbox.cpus = 1
+    end
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "vagrant.yml"
+  end
+
+end
