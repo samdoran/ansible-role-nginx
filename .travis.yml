@@ -1,37 +1,27 @@
+dist: focal
+language: python
 services: docker
 
 env:
-  - distro: centos7
-    init: /usr/lib/systemd/systemd
-    run_opts: "--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  - distro: centos6
-    init: /sbin/init
-    run_opts: ""
+  global:
+    - ROLE_NAME: nginx
+  matrix:
+    - MOLECULE_DISTRIBUTION: centos6
+    - MOLECULE_DISTRIBUTION: centos7
+    - MOLECULE_DISTRIBUTION: centos8
 
-before_install:
-  # Pull container.
-  - 'docker pull samdoran/${distro}-ansible:latest'
+install:
+  - pip install molecule[lint]==3.0.6 docker
+
+before_script:
+  # Remove "ansible-role-" prefix from role name
+  - cd ../
+  - mv ansible-role-$ROLE_NAME $ROLE_NAME
+  - cd $ROLE_NAME
 
 script:
-  - container_id=$(mktemp)
-
-  # Run container in detached state.
-  - 'docker run --detach --volume="${PWD}":/etc/ansible/roles/role_under_test:ro ${run_opts} samdoran/${distro}-ansible:latest "${init}" > "${container_id}"'
-
-  # Ansible syntax check.
-  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml --syntax-check'
-
-  # Test role.
-  - 'docker exec "$(cat ${container_id})" ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml'
-
-  # Test role idempotence.
-  - idempotence=$(mktemp)
-  - docker exec "$(cat ${container_id})" ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml | tee -a ${idempotence}
-  - >
-    tail ${idempotence}
-    | grep -q 'changed=0.*failed=0'
-    && (echo 'Idempotence test: pass' && exit 0)
-    || (echo 'Idempotence test: fail' && exit 1)
+  # Run tests
+  - molecule test --all
 
 notifications:
-  webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
