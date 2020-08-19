@@ -2,17 +2,18 @@ galaxy_info:
   role_name: nginx
   author: Sam Doran
   description: Install basic Nginx to accept .conf files
-  company:
-  license: MIT
-  min_ansible_version: 2.4
+  company: ~
+  license: Apache 2.0
+  min_ansible_version: 2.9
 
   platforms:
-  - name: EL
-    versions:
-      - 6
-      - 7
+    - name: EL
+      versions:
+        - 6
+        - 7
+        - 8
 
-  categories:
+  galaxy_tags:
     - system
     - web
     - nginx

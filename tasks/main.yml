@@ -8,7 +8,7 @@
     enabled: yes
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   tags: nginx
 
 - name: Install nginx
@@ -34,7 +34,7 @@
     dest: "{{ nginx_config_path }}/nginx.conf"
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: restart nginx
   tags:
     - nginx
@@ -46,7 +46,7 @@
     dest: "{{ nginx_config_include_path }}/rewrite.conf"
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   when: nginx_redirect_http
   notify: reload nginx
   tags:
@@ -69,7 +69,7 @@
     dest: "{{ nginx_config_include_path }}/tls.inc"
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   when: nginx_tls_enabled
   notify: reload nginx
   tags:
@@ -81,7 +81,7 @@
     content: "{{ nginx_tls_crt }}"
     dest: "{{ nginx_tls_cert_path }}/{{ nginx_tls_filename }}.crt"
     owner: root
-    mode: 0644
+    mode: '0644'
   when:
     - nginx_tls_crt is defined
     - nginx_tls_enabled
@@ -96,7 +96,7 @@
     dest: "{{ nginx_tls_key_path }}/{{ nginx_tls_filename }}.key"
     owner: root
     group: root
-    mode: 0400
+    mode: '0400'
   when:
     - nginx_tls_key is defined
     - nginx_tls_enabled
@@ -137,5 +137,6 @@
   service:
     name: nginx
     state: started
-    enabled: true
-  tags: nginx
+    enabled: yes
+  tags:
+    - nginx

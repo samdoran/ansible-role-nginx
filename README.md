@@ -49,4 +49,4 @@ Change SELinux settings to allow Nginx to bind to other ports (CentOS >= 6.6):
 License
 -------
 
-MIT
+Apache 2.0

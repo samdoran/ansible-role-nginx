@@ -1,0 +1,22 @@
+- name: Verify role
+  hosts: all
+  become: yes
+  gather_facts: no
+
+  tasks:
+    - name: Copy default.conf
+      copy:
+        src: default.conf
+        dest: /etc/nginx/conf.d/default.conf
+        mode: preserve
+        owner: root
+        group: root
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Verify web server is up
+      wait_for:
+        port: 80
